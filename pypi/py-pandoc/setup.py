@@ -21,6 +21,9 @@ spec = dict(
 
 spec = spec[platform.system()]
 spec.setdefault('url', url.format(version=version, **spec))
+# assumes that CWD is with setup.py and __sdist__ when creating sdist:
+def scripts():
+    return [('scripts/' + f) for f in os.listdir('scripts')] if not p.isfile('__sdist__') else []
 
 
 def sha256(filename):
@@ -54,7 +57,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     cwd = os.getcwd()
     dirpath = tempfile.mkdtemp()
     os.chdir(dirpath)
-    print(dirpath, file=open(r'D:\log.txt', 'a'))
+    print(cwd, dirpath, file=open(r'D:\log.txt', 'a'))
 
     call([sys.executable, "-m", "pip", "download", url], stdout=PIPE, stderr=PIPE)
     filename = url.split('/')[-1]
@@ -79,7 +82,6 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     shutil.rmtree(dirpath)
 
 
-print(os.getcwd(), file=open(r'D:\log.txt', 'w'))
 excract_tar_and_move_files(**spec)
 setup(
     name='py-pandoc',
@@ -98,5 +100,5 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     python_requires='>=3.6',
-    scripts=[('scripts/' + f) for f in os.listdir('scripts')],
+    scripts=[('scripts/*' + f) for f in os.listdir('scripts')] if not p.isfile('__mark__') else [],
 )
