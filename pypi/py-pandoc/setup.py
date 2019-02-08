@@ -10,6 +10,7 @@ src_dir = p.dirname(p.abspath(__file__))
 # ------------------------------------------------------------------------------
 # Custom settings:
 # ------------------------------------------------------------------------------
+assert_64bit()
 version = '2.6'
 url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
 tmp = 'tmp'
@@ -24,8 +25,6 @@ spec = dict(
         os='osx', build=0, move=[('bin', tmp)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
-if platform.architecture()[0] != '64bit':
-    raise RuntimeError('Only 64bit arch is supported.')
 
                                   
 class PostInstallCommand(install):
@@ -39,6 +38,12 @@ class PostInstallCommand(install):
 
 
 # ------------------------------------------------------------------------------
+
+
+def assert_64bit():
+    if not (platform.machine().endswith('64') or
+            platform.architecture()[0] == '64bit'):
+        RuntimeError('Only 64bit arch is supported.')
 
 
 def add_url(dic):
