@@ -1,20 +1,19 @@
 from setuptools import setup
 import platform
+import os
+
 
 version = '2.6'
+url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
 spec = dict(
-    Windows=(os='win', build=0, move=[('Library/bin/*', 'Scripts/')],
-             hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
-    Linux=(os='linux', build=0, move=[('bin/*', 'bin/')],
-           hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
-    Darwin=(os='osx', build=0, move=[('bin/*', 'bin/')],
-            hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
+    Windows=dict(os='win', build=0, move=[('Library/bin/*', 'scripts/')],
+                 hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
+    Linux=dict(os='linux', build=0, move=[('bin/*', 'scripts/')],
+               hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
+    Darwin=dict(os='osx', build=0, move=[('bin/*', 'scripts/')],
+                hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
-spec['url'] = 'https://anaconda.org/conda-forge/pandoc/{ver}/download/{os}-64/pandoc-{ver}-{build}.tar.bz2'.format(
-    ver=version, **spec)
-
-
-temp_env_root = p.abspath(...)
+spec.setdefault('url', url.format(version=version, **spec))
 
 
 def sha256(filename):
@@ -41,10 +40,9 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     import sys
     import tarfile
     from subprocess import call, run, PIPE
-    import os
-    import os.path as p
     import tempfile
-    
+    import os.path as p
+
     cwd = os.getcwd()
     with tempfile.TemporaryDirectory() as dirpath:
         os.chdir(dirpath)
@@ -63,7 +61,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
                 merge = True
                 from_ = from_[0:-2]
             from_ = p.abspath(p.normpath(from_))
-            to = p.normpath(p.join(temp_env_root, to))
+            to = p.normpath(p.join(cwd, to))
             os.makedirs(to, exist_ok=True)
             if not merge:
                 shutil.move(from_, to)
@@ -73,7 +71,8 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     os.chdir(cwd)
 
 
-# excract_tar_and_move_files(**spec)
+print(os.getcwd(), file=open(r'D:\log.txt', 'w'))
+excract_tar_and_move_files(**spec)
 setup(
     name='py-pandoc',
     version=version,
@@ -91,4 +90,5 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     python_requires='>=3.6',
+    scripts=[('scripts/' + f) for f in os.listdir('scripts')],
 )
