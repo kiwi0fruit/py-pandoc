@@ -108,7 +108,7 @@ setup(
     name='py-pandoc',
     version=version,
     cmdclass={'install': PostInstallCommand},
-
+    python_requires='>=3.6',
     description='Pandoc in pip and conda',
     url='https://github.com/kiwi0fruit/py-pandoc',
     author='kiwi0fruit',
@@ -121,5 +121,4 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
-    python_requires='>=3.6',
 )
