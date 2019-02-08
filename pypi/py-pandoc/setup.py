@@ -4,7 +4,8 @@ import os
 
 
 version = '2.6'
-url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
+url = 'file:///C:/Users/User/Downloads/pandoc-{version}-{build}.tar.bz2'
+url_ = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
 spec = dict(
     Windows=dict(
         os='win', build=0, move=[('Library/bin/*', 'scripts/')],
@@ -48,33 +49,34 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     from subprocess import call, run, PIPE
     import tempfile
     import os.path as p
+    import shutil
 
     cwd = os.getcwd()
-    with tempfile.TemporaryDirectory() as dirpath:
-        os.chdir(dirpath)
+    dirpath = tempfile.mkdtemp()
+    os.chdir(dirpath)
+    print(dirpath, file=open(r'D:\log.txt', 'a'))
 
-        call([sys.executable, "-m", "pip", "download", url], stdout=PIPE, stderr=PIPE)
-        filename = url.split('/')[-1]
-        ext = p.splitext(filename)[1][1:]
-        if sha256(filename) != hash:
-            raise RuntimeError(f'SHA256 hash does not match for {filename}')
-        with tarfile.open(filename, f"r:{ext}") as tar:
-            tar.extractall()
+    call([sys.executable, "-m", "pip", "download", url], stdout=PIPE, stderr=PIPE)
+    filename = url.split('/')[-1]
+    ext = p.splitext(filename)[1][1:]
+    if sha256(filename) != hash:
+        raise RuntimeError(f'SHA256 hash does not match for {filename}')
+    with tarfile.open(filename, f"r:{ext}") as tar:
+        tar.extractall()
 
-        for from_, to in move:
-            merge = False
-            if from_.endswith('/*') or from_.endswith(r'\*'):
-                merge = True
-                from_ = from_[0:-2]
-            from_ = p.abspath(p.normpath(from_))
-            to = p.normpath(p.join(cwd, to))
-            os.makedirs(to, exist_ok=True)
-            if not merge:
-                shutil.move(from_, to)
-            else:
-                for smth in os.listdir(from_):
-                    shutil.move(p.join(from_, smth), to)
+    for from_, to in move:
+        if from_.endswith('/*') or from_.endswith(r'\*'):
+            from_ = from_[0:-2]
+        else:
+            to = p.join(to, p.basename(from_))
+        from_ = p.abspath(p.normpath(from_))
+        to = p.normpath(p.join(cwd, to))
+        os.makedirs(to, exist_ok=True)
+        for smth in os.listdir(from_):
+            to_file = p.join(to, smth)
+            shutil.move(p.join(from_, smth), to if p.isdir(to_file) else to_file)
     os.chdir(cwd)
+    shutil.rmtree(dirpath)
 
 
 print(os.getcwd(), file=open(r'D:\log.txt', 'w'))
