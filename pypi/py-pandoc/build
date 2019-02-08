@@ -1,3 +1,5 @@
 #!/bin/bash
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+rm -rf ./dist
 python setup.py sdist
+rm -rf ./scripts

@@ -1,29 +1,58 @@
 from setuptools import setup
+from setuptools.command.install import install
 import platform
+import shutil
 import os
+import os.path as p
+
+source_dir = p.dirname(p.abspath(__file__))
 
 
+# ------------------------------------------------------------------------------
+# Custom settings:
+# ------------------------------------------------------------------------------
 version = '2.6'
 url = 'file:///C:/Users/User/Downloads/pandoc-{version}-{build}.tar.bz2'
-url_ = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
+# url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
+bin = 'bin'
 spec = dict(
     Windows=dict(
-        os='win', build=0, move=[('Library/bin/*', 'scripts/')],
+        os='win', build=0, move=[('Library/bin/*', bin)],
         hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
     Linux=dict(
-        os='linux', build=0, move=[('bin/*', 'scripts/')],
+        os='linux', build=0, move=[('bin/*', bin)],
         hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
     Darwin=dict(
-        os='osx', build=0, move=[('bin/*', 'scripts/')],
+        os='osx', build=0, move=[('bin/*', bin)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )
 
 
+class PostInstallCommand(install):
+    def run(self):
+        import stat
+
+        excract_tar_and_move_files(**spec)
+
+        from_ = p.join(source_dir, bin)
+        to = self.install_scripts
+        os.makedirs(to, exist_ok=True)
+
+        for smth in os.listdir(from_):
+            file_path = p.join(from_, smth)
+            if os.name != 'nt' and p.isfile(file_path):
+                st = os.stat(file_path)
+                os.chmod(file_path, st.st_mode | stat.S_IEXEC)
+            shutil.move(file_path, to)
+
+        install.run(self)
+
+
+# ------------------------------------------------------------------------------
+
+
 spec = spec[platform.system()]
 spec.setdefault('url', url.format(version=version, **spec))
-# assumes that CWD is with setup.py and __sdist__ when creating sdist:
-def scripts():
-    return [('scripts/' + f) for f in os.listdir('scripts')] if not p.isfile('__sdist__') else []
 
 
 def sha256(filename):
@@ -44,20 +73,17 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     ``url`` should be of the form ``z/name.x.y.gz``
     (``gz``, ``bz2`` or other suffix supported by the tarfile module).
     ``move`` contains pairs of dirs, first one can be of the form ``dir/*``
-    (it means moving contents instead of moving the first dir).
+    (it means moving contents instead of moving the dir itself).
     Can download more packages if the target archive contains ``setup.py``
     """
     import sys
     import tarfile
     from subprocess import call, run, PIPE
     import tempfile
-    import os.path as p
-    import shutil
 
-    cwd = os.getcwd()
     dirpath = tempfile.mkdtemp()
+    cwd = os.getcwd()
     os.chdir(dirpath)
-    print(cwd, dirpath, file=open(r'D:\log.txt', 'a'))
 
     call([sys.executable, "-m", "pip", "download", url], stdout=PIPE, stderr=PIPE)
     filename = url.split('/')[-1]
@@ -73,19 +99,18 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
         else:
             to = p.join(to, p.basename(from_))
         from_ = p.abspath(p.normpath(from_))
-        to = p.normpath(p.join(cwd, to))
+        to = p.normpath(p.join(source_dir, to))
         os.makedirs(to, exist_ok=True)
         for smth in os.listdir(from_):
-            to_file = p.join(to, smth)
-            shutil.move(p.join(from_, smth), to if p.isdir(to_file) else to_file)
+            shutil.move(p.join(from_, smth), to)
     os.chdir(cwd)
     shutil.rmtree(dirpath)
 
 
-excract_tar_and_move_files(**spec)
 setup(
     name='py-pandoc',
     version=version,
+    cmdclass={'install': PostInstallCommand},
 
     description='Pandoc in pip and conda',
     url='https://github.com/kiwi0fruit/py-pandoc',
@@ -100,5 +125,4 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     python_requires='>=3.6',
-    scripts=[('scripts/*' + f) for f in os.listdir('scripts')] if not p.isfile('__mark__') else [],
 )
