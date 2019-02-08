@@ -4,7 +4,6 @@ import os
 import os.path as p
 import platform
 import shutil
-import stat
 
 src_dir = p.dirname(p.abspath(__file__))
 
@@ -31,12 +30,10 @@ spec.setdefault('url', url.format(version=version, **spec))
 class PostInstallCommand(install):
     def run(self):
         excract_tar_and_move_files(**spec)
-
-        from_ = p.join(src_dir, tmp)
-        to = self.install_scripts
-        set_exec = True
-
-        
+        move_contents(
+            from_=p.join(src_dir, tmp)
+            to=self.install_scripts
+            set_exec=True)
         install.run(self)
 
 
@@ -44,6 +41,7 @@ class PostInstallCommand(install):
 
 
 def move_contents(from_, to, set_exec=False):
+    import stat
     os.makedirs(to, exist_ok=True)
     for file in os.listdir(from_):
         to_file = p.join(to, file)
@@ -58,7 +56,6 @@ def move_contents(from_, to, set_exec=False):
 def sha256(filename):
     """ https://stackoverflow.com/a/44873382/9071377 """
     import hashlib
-
     h  = hashlib.sha256()
     b  = bytearray(128*1024)
     mv = memoryview(b)
