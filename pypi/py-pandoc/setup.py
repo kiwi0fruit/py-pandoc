@@ -11,16 +11,16 @@ import stat
 # ------------------------------------------------------------------------------
 version = '2.6'
 url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
-bin = 'bin'
+tmp = 'tmp'
 spec = dict(
     Windows=dict(
-        os='win', build=0, move=[('Library/bin/*', bin)],
+        os='win', build=0, move=[('Library/bin/*', tmp)],
         hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
     Linux=dict(
-        os='linux', build=0, move=[('bin/*', bin)],
+        os='linux', build=0, move=[('bin/*', tmp)],
         hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
     Darwin=dict(
-        os='osx', build=0, move=[('bin/*', bin)],
+        os='osx', build=0, move=[('bin/*', tmp)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
 spec.setdefault('url', url.format(version=version, **spec))
@@ -30,7 +30,7 @@ class PostInstallCommand(install):
     def run(self):
         excract_tar_and_move_files(**spec)
 
-        from_ = p.join(p.dirname(p.abspath(__file__)), bin)
+        from_ = p.join(p.dirname(p.abspath(__file__)), tmp)
         to = self.install_scripts
         os.makedirs(to, exist_ok=True)
 
@@ -64,13 +64,15 @@ def sha256(filename):
 
 def excract_tar_and_move_files(url, hash, move, **kwargs):
     """
-    Extracts to the setup.py dir. Can download more packages if the target
-    archive contains setup.py
+    Moves relative to the setup.py dir. Can download more packages
+    if the target archive contains setup.py
 
     * ``url`` should be of the form z/name.x.y.gz
       (gz, bz2 or other suffix supported by the tarfile module).
     * ``move`` contains pairs of dirs, first one can be of the form ``dir/*``
       (it means moving contents instead of moving the dir itself).
+      First dir is in the extracted archive,
+      second dir is in the same folder as setup.py
     """
     import sys
     import tarfile
