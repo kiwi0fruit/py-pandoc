@@ -34,13 +34,14 @@ class PostInstallCommand(install):
 
         from_ = p.join(src_dir, tmp)
         to = self.install_scripts
-        os.makedirs(to, exist_ok=True)
+        set_exec = True
 
+        os.makedirs(to, exist_ok=True)
         for file in os.listdir(from_):
-            from_file = p.join(from_, file)
             to_file = p.join(to, file)
-            if p.isfile(from_file):
-                shutil.move(from_file, to_file if not p.isdir(to_file) else to)
+            shutil.move(p.join(from_, file),
+                        to_file if p.isfile(to_file) else to)
+            if p.isfile(to_file) and set_exec:
                 if os.name != 'nt':
                     st = os.stat(to_file)
                     os.chmod(to_file, st.st_mode | stat.S_IEXEC)
