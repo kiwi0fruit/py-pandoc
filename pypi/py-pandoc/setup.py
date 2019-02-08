@@ -24,12 +24,11 @@ spec = dict(
         os='osx', build=0, move=[('bin/*', tmp)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
-spec.setdefault('url', url.format(version=version, **spec))
 
                                   
 class PostInstallCommand(install):
     def run(self):
-        excract_tar_and_move_files(**spec)
+        excract_tar_and_move_files(**add_url(spec))
         move_contents(
             from_=p.join(src_dir, tmp)
             to=self.install_scripts
@@ -38,6 +37,11 @@ class PostInstallCommand(install):
 
 
 # ------------------------------------------------------------------------------
+
+
+def add_url(dic):
+    dic.setdefault('url', url.format(version=version, **dic))
+    return dic
 
 
 def move_contents(from_, to, set_exec=False):
