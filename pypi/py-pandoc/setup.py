@@ -43,7 +43,7 @@ class PostInstallCommand(install):
 def assert_64bit_os():
     if not (platform.machine().endswith('64') or  # 64bit OS
             platform.architecture()[0] == '64bit'):  # 64bit Python
-        raise RuntimeError('Only 64bit arch is supported.')
+        raise RuntimeError('Only 64bit OS is supported.')
 
 
 def add_url(dic):
