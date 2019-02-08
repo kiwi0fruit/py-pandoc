@@ -24,6 +24,8 @@ spec = dict(
         os='osx', build=0, move=[('bin/*', tmp)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
+if platform.architecture()[0] != '64bit':
+    raise RuntimeError('Only 64bit arch is supported.')
 
                                   
 class PostInstallCommand(install):
