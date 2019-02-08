@@ -1,19 +1,16 @@
 from setuptools import setup
 from setuptools.command.install import install
-import platform
-import shutil
 import os
 import os.path as p
-
-source_dir = p.dirname(p.abspath(__file__))
-
+import platform
+import shutil
+import stat
 
 # ------------------------------------------------------------------------------
 # Custom settings:
 # ------------------------------------------------------------------------------
 version = '2.6'
-url = 'file:///C:/Users/User/Downloads/pandoc-{version}-{build}.tar.bz2'
-# url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
+url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
 bin = 'bin'
 spec = dict(
     Windows=dict(
@@ -30,20 +27,20 @@ spec = dict(
 
 class PostInstallCommand(install):
     def run(self):
-        import stat
-
         excract_tar_and_move_files(**spec)
 
-        from_ = p.join(source_dir, bin)
+        from_ = p.join(p.dirname(p.abspath(__file__)), bin)
         to = self.install_scripts
         os.makedirs(to, exist_ok=True)
 
-        for smth in os.listdir(from_):
-            file_path = p.join(from_, smth)
-            if os.name != 'nt' and p.isfile(file_path):
-                st = os.stat(file_path)
-                os.chmod(file_path, st.st_mode | stat.S_IEXEC)
-            shutil.move(file_path, to)
+        for file in os.listdir(from_):
+            file_path = p.join(from_, file)
+            # there should be no folders anyway:
+            if p.isfile(file_path):
+                if os.name != 'nt':
+                    st = os.stat(file_path)
+                    os.chmod(file_path, st.st_mode | stat.S_IEXEC)
+                shutil.move(file_path, p.join(to, file))
 
         install.run(self)
 
@@ -70,11 +67,13 @@ def sha256(filename):
 
 def excract_tar_and_move_files(url, hash, move, **kwargs):
     """
-    ``url`` should be of the form ``z/name.x.y.gz``
-    (``gz``, ``bz2`` or other suffix supported by the tarfile module).
-    ``move`` contains pairs of dirs, first one can be of the form ``dir/*``
-    (it means moving contents instead of moving the dir itself).
-    Can download more packages if the target archive contains ``setup.py``
+    Extracts to the setup.py dir. Can download more packages if the target
+    archive contains setup.py
+
+    * ``url`` should be of the form z/name.x.y.gz
+      (gz, bz2 or other suffix supported by the tarfile module).
+    * ``move`` contains pairs of dirs, first one can be of the form ``dir/*``
+      (it means moving contents instead of moving the dir itself).
     """
     import sys
     import tarfile
@@ -99,7 +98,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
         else:
             to = p.join(to, p.basename(from_))
         from_ = p.abspath(p.normpath(from_))
-        to = p.normpath(p.join(source_dir, to))
+        to = p.normpath(p.join(p.dirname(p.abspath(__file__)), to))
         os.makedirs(to, exist_ok=True)
         for smth in os.listdir(from_):
             shutil.move(p.join(from_, smth), to)
