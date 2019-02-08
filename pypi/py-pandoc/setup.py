@@ -36,7 +36,6 @@ class PostInstallCommand(install):
 
         for file in os.listdir(from_):
             file_path = p.join(from_, file)
-            # there should be no folders anyway:
             if p.isfile(file_path):
                 if os.name != 'nt':
                     st = os.stat(file_path)
