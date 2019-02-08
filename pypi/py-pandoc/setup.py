@@ -15,13 +15,13 @@ url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc
 tmp = 'tmp'
 spec = dict(
     Windows=dict(
-        os='win', build=0, move=[('Library/bin/*', tmp)],
+        os='win', build=0, move=[('Library/bin', tmp)],
         hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
     Linux=dict(
-        os='linux', build=0, move=[('bin/*', tmp)],
+        os='linux', build=0, move=[('bin', tmp)],
         hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
     Darwin=dict(
-        os='osx', build=0, move=[('bin/*', tmp)],
+        os='osx', build=0, move=[('bin', tmp)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
 if platform.architecture()[0] != '64bit':
@@ -57,7 +57,7 @@ def move_contents(from_, to, set_exec=False):
             if os.name != 'nt':
                 st = os.stat(to_file)
                 os.chmod(to_file, st.st_mode | stat.S_IEXEC)
-                
+ 
 
 def sha256(filename):
     """ https://stackoverflow.com/a/44873382/9071377 """
@@ -78,8 +78,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
 
     * ``url`` should be of the form z/name.x.y.gz
       (gz, bz2 or other suffix supported by the tarfile module).
-    * ``move`` contains pairs of dirs, first one can be of the form ``dir/*``
-      (it means moving contents instead of moving the dir itself).
+    * ``move`` contains pairs of dirs where to move contents.
       First dir is in the extracted archive,
       second dir is in the same folder as setup.py
     """
@@ -101,10 +100,6 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
         tar.extractall()
 
     for from_, to in move:
-        if from_.endswith('/*') or from_.endswith(r'\*'):
-            from_ = from_[0:-2]
-        else:
-            to = p.join(to, p.basename(from_))
         from_ = p.abspath(p.normpath(from_))
         to = p.normpath(p.join(src_dir, to))
         os.makedirs(to, exist_ok=True)
