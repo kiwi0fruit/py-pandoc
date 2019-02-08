@@ -36,21 +36,24 @@ class PostInstallCommand(install):
         to = self.install_scripts
         set_exec = True
 
-        os.makedirs(to, exist_ok=True)
-        for file in os.listdir(from_):
-            to_file = p.join(to, file)
-            shutil.move(p.join(from_, file),
-                        to_file if p.isfile(to_file) else to)
-            if p.isfile(to_file) and set_exec:
-                if os.name != 'nt':
-                    st = os.stat(to_file)
-                    os.chmod(to_file, st.st_mode | stat.S_IEXEC)
-                
+        
         install.run(self)
 
 
 # ------------------------------------------------------------------------------
 
+
+def move_contents(from_, to, set_exec=False):
+    os.makedirs(to, exist_ok=True)
+    for file in os.listdir(from_):
+        to_file = p.join(to, file)
+        shutil.move(p.join(from_, file),
+                    to_file if p.isfile(to_file) else to)
+        if p.isfile(to_file) and set_exec:
+            if os.name != 'nt':
+                st = os.stat(to_file)
+                os.chmod(to_file, st.st_mode | stat.S_IEXEC)
+                
 
 def sha256(filename):
     """ https://stackoverflow.com/a/44873382/9071377 """
