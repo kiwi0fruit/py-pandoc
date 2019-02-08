@@ -22,9 +22,10 @@ spec = dict(
     Darwin=dict(
         os='osx', build=0, move=[('bin/*', bin)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
-)
+)[platform.system()]
+spec.setdefault('url', url.format(version=version, **spec))
 
-
+                                  
 class PostInstallCommand(install):
     def run(self):
         excract_tar_and_move_files(**spec)
@@ -46,10 +47,6 @@ class PostInstallCommand(install):
 
 
 # ------------------------------------------------------------------------------
-
-
-spec = spec[platform.system()]
-spec.setdefault('url', url.format(version=version, **spec))
 
 
 def sha256(filename):
