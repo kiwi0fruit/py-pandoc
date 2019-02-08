@@ -6,6 +6,8 @@ import platform
 import shutil
 import stat
 
+src_dir = p.dirname(p.abspath(__file__))
+
 # ------------------------------------------------------------------------------
 # Custom settings:
 # ------------------------------------------------------------------------------
@@ -30,18 +32,19 @@ class PostInstallCommand(install):
     def run(self):
         excract_tar_and_move_files(**spec)
 
-        from_ = p.join(p.dirname(p.abspath(__file__)), tmp)
+        from_ = p.join(src_dir, tmp)
         to = self.install_scripts
         os.makedirs(to, exist_ok=True)
 
         for file in os.listdir(from_):
-            file_path = p.join(from_, file)
-            if p.isfile(file_path):
+            from_file = p.join(from_, file)
+            to_file = p.join(to, file)
+            if p.isfile(from_file):
+                shutil.move(from_file, to_file if not p.isdir(to_file) else to)
                 if os.name != 'nt':
-                    st = os.stat(file_path)
-                    os.chmod(file_path, st.st_mode | stat.S_IEXEC)
-                shutil.move(file_path, p.join(to, file))
-
+                    st = os.stat(to_file)
+                    os.chmod(to_file, st.st_mode | stat.S_IEXEC)
+                
         install.run(self)
 
 
@@ -96,10 +99,10 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
         else:
             to = p.join(to, p.basename(from_))
         from_ = p.abspath(p.normpath(from_))
-        to = p.normpath(p.join(p.dirname(p.abspath(__file__)), to))
+        to = p.normpath(p.join(src_dir, to))
         os.makedirs(to, exist_ok=True)
-        for smth in os.listdir(from_):
-            shutil.move(p.join(from_, smth), to)
+        for s in os.listdir(from_):
+            shutil.move(p.join(from_, s), to)
     os.chdir(cwd)
     shutil.rmtree(dirpath)
 
