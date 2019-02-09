@@ -32,7 +32,7 @@ spec['url'] = spec['url'].format(**spec)
 
 class PostInstallCommand(install):
     def run(self):
-        excract_tar_and_move_files(spec)
+        excract_tar_and_move_files(**spec)
         move_contents(
             from_=p.join(src_dir, tmp)
             to=self.install_scripts
