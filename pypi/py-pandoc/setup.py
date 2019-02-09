@@ -18,22 +18,22 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
+version = '2.6'
 tmp = 'tmp'
 spec = dict(
-    version='2.6',
-    url='https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2')
-spec.update(dict(
     Windows=dict(
-        os='win', build=0, move=[('Library/bin', tmp)],
+        os='win', move=[('Library/bin', tmp)], version=version, build=0,
         hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
     Linux=dict(
-        os='linux', build=0, move=[('bin', tmp)],
+        os='linux', move=[('bin', tmp)], version=version, build=0,
         hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
     Darwin=dict(
-        os='osx', build=0, move=[('bin', tmp)],
+        os='osx', move=[('bin', tmp)], version=version, build=0,
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
-)[platform.system()])
-spec['url'] = spec['url'].format(**spec)
+)[platform.system()]
+spec.update(dict(
+    url='https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
+))
 
 
 class PostInstallCommand(install):
@@ -114,7 +114,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
 
 setup(
     name='py-pandoc',
-    version=spec['version'],
+    version=version,
     cmdclass={'install': PostInstallCommand},
     python_requires='>=3.6',
     description='Pandoc in pip and conda',
