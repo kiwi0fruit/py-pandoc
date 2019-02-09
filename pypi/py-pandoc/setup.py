@@ -8,6 +8,12 @@ import shutil
 src_dir = p.dirname(p.abspath(__file__))
 
 
+def assert_64_bit_os():
+    if not (platform.machine().endswith('64') or  # 64 bit OS if method is OK
+            platform.architecture()[0] == '64bit'):  # 64 bit Python
+        raise RuntimeError('Only 64bit OS is supported.')
+
+
 # ------------------------------------------------------------------------------
 # Custom settings:
 # ------------------------------------------------------------------------------
@@ -34,19 +40,13 @@ class PostInstallCommand(install):
     def run(self):
         excract_tar_and_move_files(**spec)
         move_contents(
-            from_=p.join(src_dir, tmp)
-            to=self.install_scripts
+            from_=p.join(src_dir, tmp),
+            to=self.install_scripts,
             set_exec=True)
         install.run(self)
 
-
 # ------------------------------------------------------------------------------
-
-
-def assert_64_bit_os():
-    if not (platform.machine().endswith('64') or  # 64 bit OS if method is OK
-            platform.architecture()[0] == '64bit'):  # 64 bit Python
-        raise RuntimeError('Only 64bit OS is supported.')
+# ------------------------------------------------------------------------------
 
 
 def move_contents(from_, to, set_exec=False):
