@@ -34,12 +34,12 @@ spec = dict(
         hash='d2fa53afdbac6fdf9ba1e44727ccef230ae3300d8ce62db262195d804e53a160'),  # 2.5-1
         # hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),  # 2.6-0
 )[platform.system()]
-url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
+URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 
 
 class PostInstallCommand(install):
     def run(self):
-        excract_tar_and_move_files(url=url, **spec)
+        excract_tar_and_move_files(url=URL, **spec)
         move_contents(
             from_=p.join(src_dir, tmp),
             to=self.install_scripts,
