@@ -7,14 +7,16 @@ import shutil
 
 src_dir = p.dirname(p.abspath(__file__))
 
+
 # ------------------------------------------------------------------------------
 # Custom settings:
 # ------------------------------------------------------------------------------
-assert_64bit_os()
-version = '2.6'
-url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'
+assert_64_bit_os()
 tmp = 'tmp'
 spec = dict(
+    version = '2.6'
+    url = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2')
+spec.update(dict(
     Windows=dict(
         os='win', build=0, move=[('Library/bin', tmp)],
         hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
@@ -24,12 +26,13 @@ spec = dict(
     Darwin=dict(
         os='osx', build=0, move=[('bin', tmp)],
         hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
-)[platform.system()]
+)[platform.system()])
+spec['url'] = spec['url'].format(**spec)
 
-                                  
+
 class PostInstallCommand(install):
     def run(self):
-        excract_tar_and_move_files(**add_url(spec))
+        excract_tar_and_move_files(spec)
         move_contents(
             from_=p.join(src_dir, tmp)
             to=self.install_scripts
@@ -40,15 +43,10 @@ class PostInstallCommand(install):
 # ------------------------------------------------------------------------------
 
 
-def assert_64bit_os():
-    if not (platform.machine().endswith('64') or  # 64bit OS
-            platform.architecture()[0] == '64bit'):  # 64bit Python
+def assert_64_bit_os():
+    if not (platform.machine().endswith('64') or  # 64 bit OS if method is OK
+            platform.architecture()[0] == '64bit'):  # 64 bit Python
         raise RuntimeError('Only 64bit OS is supported.')
-
-
-def add_url(dic):
-    dic.setdefault('url', url.format(version=version, **dic))
-    return dic
 
 
 def move_contents(from_, to, set_exec=False):
@@ -62,7 +60,7 @@ def move_contents(from_, to, set_exec=False):
             if os.name != 'nt':
                 st = os.stat(to_file)
                 os.chmod(to_file, st.st_mode | stat.S_IEXEC)
- 
+
 
 def sha256(filename):
     """ https://stackoverflow.com/a/44873382/9071377 """
@@ -116,7 +114,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
 
 setup(
     name='py-pandoc',
-    version=version,
+    version=spec['version'],
     cmdclass={'install': PostInstallCommand},
     python_requires='>=3.6',
     description='Pandoc in pip and conda',
