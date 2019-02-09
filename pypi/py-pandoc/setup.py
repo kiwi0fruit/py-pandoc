@@ -14,7 +14,7 @@ src_dir = p.dirname(p.abspath(__file__))
 assert_64_bit_os()
 tmp = 'tmp'
 spec = dict(
-    version='2.6'
+    version='2.6',
     url='https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2')
 spec.update(dict(
     Windows=dict(
