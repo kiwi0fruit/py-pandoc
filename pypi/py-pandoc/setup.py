@@ -1,3 +1,8 @@
+conda = False
+# --------------------------
+#
+#
+# --------------------------
 from setuptools import setup
 from setuptools.command.install import install
 import os
@@ -130,4 +135,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
+    **(dict(
+        cmdclass={'install': PostInstallCommand}
+    ) if not conda else {})
 )
