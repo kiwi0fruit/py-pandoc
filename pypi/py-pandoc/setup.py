@@ -121,7 +121,6 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
 setup(
     name='py-pandoc',
     version=version,
-    cmdclass={'install': PostInstallCommand},
     python_requires='>=3.6',
     description='Pandoc in pip and conda',
     url='https://github.com/kiwi0fruit/py-pandoc',
