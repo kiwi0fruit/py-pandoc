@@ -23,21 +23,18 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
-version = '2.5.0.2'
+version = '2.6.0.1'
 tmp = 'tmp'
 spec = dict(
     Windows=dict(
-        os='win', move=[('Library/bin', tmp)], version='2.5', build=1,
-        hash='a0f6d961e5cc45541be0b0664317295cc870180e2328fa18d2ea481c5079530a'),  # 2.5-1
-        # hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),  # 2.6-0
+        os='win', move=[('Library/bin', tmp)], version='2.6', build=0,
+        hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
     Linux=dict(
-        os='linux', move=[('bin', tmp)], version='2.5', build=1,
-        hash='439737fb9a8e98e36e2a75a62b5fd4c3330e4238bcef6d36353994b7691a37ad'),  # 2.5-1
-        # hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),  # 2.6-0
+        os='linux', move=[('bin', tmp)], version='2.6', build=0,
+        hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
     Darwin=dict(
-        os='osx', move=[('bin', tmp)], version='2.5', build=1,
-        hash='d2fa53afdbac6fdf9ba1e44727ccef230ae3300d8ce62db262195d804e53a160'),  # 2.5-1
-        # hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),  # 2.6-0
+        os='osx', move=[('bin', tmp)], version='2.6', build=0,
+        hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
 URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 
