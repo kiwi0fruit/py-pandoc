@@ -23,7 +23,7 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
-version = '2.5'
+version = '2.5.0.1'
 tmp = 'tmp'
 spec = dict(
     Windows=dict(
