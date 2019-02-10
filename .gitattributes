@@ -3,4 +3,4 @@
 *.bat  text       eol=crlf
 *.cmd  text       eol=crlf
 *.sh   text       eol=lf
-*.patch -text
+*.py   text       eol=lf
