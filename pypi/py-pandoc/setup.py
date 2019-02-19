@@ -23,7 +23,7 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
-version, build = '2.6', '.0.3'
+version, build = '2.6', '.0.2'
 conda_version = version
 tmp = 'tmp'
 spec = dict(
