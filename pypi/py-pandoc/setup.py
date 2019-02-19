@@ -23,7 +23,7 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
-version = '2.6.0.1'
+version = '2.6.0.2'
 tmp = 'tmp'
 spec = dict(
     Windows=dict(
@@ -119,7 +119,7 @@ setup(
     name='py-pandoc',
     version=version,
     python_requires='>=3.6',
-    description='Pandoc in pip and conda',
+    description='Installs pandoc conda package in pip and conda.',
     url='https://github.com/kiwi0fruit/py-pandoc',
     author='kiwi0fruit',
     author_email='peter.zagubisalo@gmail.com',
