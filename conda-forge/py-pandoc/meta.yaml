@@ -1,14 +1,14 @@
 {% set name = "py-pandoc" %}
-{% set version = "2.6" %}
-{% set pypi_build = ".0.1" %}
+{% set version = "2.6.0.2" %}
+{% set dep_ver = "2.6" %}
 
 package:
   name: {{ name|lower }}
-  version: {{ version }}{{ pypi_build }}
+  version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}{{ pypi_build }}.tar.gz
-  sha256: b2d31457792d8a3b7c40850ef4f2ee1467f4658d44209da7869a5d0927b80f1b
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 91dcbcbc41bf70a7832f7942ab4508ba655e7261d6da27c2d265ec45320c1224
   patches:
     - conda.patch
 
@@ -23,7 +23,7 @@ requirements:
     - pip
   run:
     - python >=3.6
-    - pandoc ={{ version }}
+    - pandoc ={{ dep_ver }}
 
 test:
   commands:
