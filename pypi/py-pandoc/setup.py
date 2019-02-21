@@ -23,19 +23,19 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
-version, build = '2.6', '.0.2'
+version, build = '2.6', '.0.3'
 conda_version = version
 tmp = 'tmp'
 spec = dict(
     Windows=dict(
         os='win', move=[('Library/bin', tmp)], version=conda_version, build=0,
-        hash='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
+        hash_='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
     Linux=dict(
         os='linux', move=[('bin', tmp)], version=conda_version, build=0,
-        hash='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
+        hash_='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
     Darwin=dict(
         os='osx', move=[('bin', tmp)], version=conda_version, build=0,
-        hash='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
+        hash_='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
 )[platform.system()]
 URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 
@@ -78,7 +78,7 @@ def sha256(filename):
     return h.hexdigest()
 
 
-def excract_tar_and_move_files(url, hash, move, **kwargs):
+def excract_tar_and_move_files(url, hash_, move, **kwargs):
     """
     Moves relative to the setup.py dir. Can download more packages
     if the target archive contains setup.py
@@ -101,7 +101,7 @@ def excract_tar_and_move_files(url, hash, move, **kwargs):
     call([sys.executable, "-m", "pip", "download", url], stdout=PIPE, stderr=PIPE)
     filename = url.split('/')[-1]
     ext = p.splitext(filename)[1][1:]
-    if sha256(filename) != hash:
+    if sha256(filename) != hash_:
         raise RuntimeError(f'SHA256 hash does not match for {filename}')
     with tarfile.open(filename, f"r:{ext}") as tar:
         tar.extractall()
