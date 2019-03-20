@@ -2,7 +2,7 @@
 if: (type = pull_request) OR (tag IS present)
 
 os:
-  - windows
+  # - windows
   - linux
   # - osx
 
@@ -45,8 +45,7 @@ install:
   - |
     conda create -y -n test-env "python=$_py_ver" "pip>=10.0.1"
   - source activate test-env
-  - cd ./pypi/py-pandoc
-  - pip install .
+  - pip install 'git+https://github.com/kiwi0fruit/py-pandoc.git#egg=py-pandoc&subdirectory=pypi/py-pandoc'
 
 # Run test
 script:
