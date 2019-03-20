@@ -6,7 +6,7 @@ conda = False
 from setuptools import setup
 from setuptools.command.install import install
 import os
-# import io
+import io
 import os.path as p
 import platform
 import shutil
