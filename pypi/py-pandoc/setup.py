@@ -108,7 +108,9 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         tar.extractall()
 
     for from_, to in move:
-        shutil.rmtree(p.join(src_dir, to))
+        to = p.normpath(p.join(src_dir, to))
+        if p.isdir(to):
+            shutil.rmtree(to)
     for from_, to in move:
         from_ = p.abspath(p.normpath(from_))
         to = p.normpath(p.join(src_dir, to))
