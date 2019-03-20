@@ -88,6 +88,7 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
     * ``move`` contains pairs of dirs where to move contents.
       First dir is in the extracted archive,
       second dir is in the same folder as setup.py
+      WARNING: Mind that the second dir would be cleaned!
     """
     import sys
     import tarfile
@@ -106,6 +107,8 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
     with tarfile.open(filename, f"r:{ext}") as tar:
         tar.extractall()
 
+    for from_, to in move:
+        shutil.rmtree(p.join(src_dir, to))
     for from_, to in move:
         from_ = p.abspath(p.normpath(from_))
         to = p.normpath(p.join(src_dir, to))
