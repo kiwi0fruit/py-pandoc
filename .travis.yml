@@ -2,9 +2,9 @@
 if: (type = pull_request) OR (tag IS present)
 
 os:
-  - windows
+  # - windows
   - linux
-  - osx
+  # - osx
 
 dist: xenial
 
@@ -46,7 +46,7 @@ install:
     conda create -y -n test-env "python=$_py_ver" "pip>=10.0.1"
   - source activate test-env
   - cd ./pypi/py-pandoc
-  - pip install -e .[dev]
+  - pip install -e .
 
 # Run test
 script:

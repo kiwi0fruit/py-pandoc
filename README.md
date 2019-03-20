@@ -1,5 +1,7 @@
 # Pandoc
 
+[![Build Status](https://travis-ci.org/kiwi0fruit/py-pandoc.svg?branch=master)](https://travis-ci.org/kiwi0fruit/py-pandoc)
+
 Pandoc in pip and conda. Contents:
 
 * [conda-forge/**pandoc**](https://github.com/conda-forge/pandoc-feedstock) feedstock backup,
