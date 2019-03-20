@@ -43,7 +43,7 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
   - |
-    conda create -y -n test-envi "python=$_py_ver" "pip>=10.0.1"
+    conda create -y -n test-env "python=$_py_ver" "pip>=10.0.1"
   - source activate test-env
   - cd ./pypi/py-pandoc
   - pip install -e .[dev]
