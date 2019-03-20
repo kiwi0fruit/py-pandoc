@@ -111,7 +111,8 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         to = p.normpath(p.join(src_dir, to))
         os.makedirs(to, exist_ok=True)
         for s in os.listdir(from_):
-            shutil.move(p.join(from_, s), to)
+            to_s = p.join(to, s)
+            shutil.move(p.join(from_, s), to_s if p.isfile(to_s) else to)
     os.chdir(cwd)
     shutil.rmtree(dirpath)
 

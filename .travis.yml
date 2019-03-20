@@ -45,7 +45,8 @@ install:
   - |
     conda create -y -n test-env "python=$_py_ver" "pip>=10.0.1"
   - source activate test-env
-  - pip install 'git+https://github.com/kiwi0fruit/py-pandoc.git#egg=py-pandoc&subdirectory=pypi/py-pandoc'
+  - cd ./pypi/py-pandoc
+  - pip install .
 
 # Run test
 script:
