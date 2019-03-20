@@ -23,19 +23,19 @@ def assert_64_bit_os():
 # Custom settings:
 # ------------------------------------------------------------------------------
 assert_64_bit_os()
-version, build = '2.6', '.0.3'
+version, build = '2.7.1', ''
 conda_version = version
 tmp = 'tmp'
 spec = dict(
     Windows=dict(
         os='win', move=[('Library/bin', tmp)], version=conda_version, build=0,
-        hash_='04f1a3e6b05714627872fade3301c3cb057494282ce3a5cb8febab0bc29317d4'),
+        hash_='2c75ea5e0478f040af300cc8ca0aa5fd8c8c9e9a0303cb2d882973cbe58734d1'),
     Linux=dict(
         os='linux', move=[('bin', tmp)], version=conda_version, build=0,
-        hash_='344b57466e76d50e5519823ba385aae50fc42683c933d6c17d9f47fed41cfbf9'),
+        hash_='2ebe15ebd024e0e680ff9b92ef3e29817ac64425d8228fbc0fcd025602a641a6'),
     Darwin=dict(
         os='osx', move=[('bin', tmp)], version=conda_version, build=0,
-        hash_='92319289025f2d79a2a69292364121c8e171c57d734a82fa5b2f1eca86e8f9ad'),
+        hash_='36d8084ce0bc394ca8fb32c2c97ed48cdc1b257b7bad79050cc414c90bd20f03'),
 )[platform.system()]
 URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 

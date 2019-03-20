@@ -1,6 +1,0 @@
-win:
-  enabled: True
-osx:
-  enabled: True
-linux:
-  enabled: True
