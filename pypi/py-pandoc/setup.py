@@ -29,12 +29,24 @@ def read_pythonic_config(file_path, vars_):
     return [literal_eval(config.get('_', var)) for var in vars_]
 
 
+def sha256(filename):
+    """ https://stackoverflow.com/a/44873382/9071377 """
+    import hashlib
+    h  = hashlib.sha256()
+    b  = bytearray(128*1024)
+    mv = memoryview(b)
+    with open(filename, 'rb', buffering=0) as f:
+        for n in iter(lambda : f.readinto(mv), 0):
+            h.update(mv[:n])
+    return h.hexdigest()
+
+
 # ------------------------------------------------------------------------------
 # Custom settings:
 # ------------------------------------------------------------------------------
 # version = read_pythonic_config(p.join(src_dir, 'py_pandoc', 'version.py'), ['version'])[0]
 assert_64_bit_os()
-version, build = '2.9.2', ''  # '2.7.3', '.1'
+version, build = '2.9.2', '.0.1'  # '2.7.3', '.1'
 conda_version = version
 tmp = 'tmp'
 spec = dict(
@@ -50,6 +62,7 @@ spec = dict(
 )[platform.system()]
 # spec = spec.get(platform.system(), spec['Linux'])
 URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
+# URL = 'file:///C:/Users/x/Downloads/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 REQ = '{url} --hash=sha256:{hash_}\n'.format(url=URL, **spec)
 
 
@@ -95,6 +108,7 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
     import tarfile
     from subprocess import run, PIPE
     import tempfile
+    import tarfile
 
     cwd = os.getcwd()
     dirpath = tempfile.mkdtemp()
@@ -106,28 +120,27 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         req = p.join(os.getcwd(), 'requirements.txt')
         print(REQ, file=open(req, 'w', encoding='utf-8'))
 
-        proc = run([sys.executable, "-m", "pip", "download", "--require-hashes", "-r", req], stdout=PIPE, stderr=PIPE, encoding='utf-8',
+        proc = run([sys.executable, "-m", "pip", "download", "--require-hashes", "-b", temp_dir, "-r", req], stdout=PIPE, stderr=PIPE, encoding='utf-8',
                    env={**dict(os.environ), **dict(TMPDIR=temp_dir)})
 
-        if proc.stderr is None:
-            raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + 'assert proc.stderr is not None')
-        stderr = str(proc.stderr)
-        if not (('FileNotFoundError' in stderr) and ('setup.py' in stderr)):
-            raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + stderr)
-        pip_tmp_dirs = os.listdir(temp_dir)
-        if len(pip_tmp_dirs) != 1:
-            raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + 'assert len(pip_tmp_dirs) == 1')
+        if proc.stderr is not None:
+            stderr = str(proc.stderr)
+            if 'sha256' in stderr.lower():
+                raise AssertionError(stderr)
 
-        if 'sha256' in stderr.lower():
-            raise AssertionError(stderr)
-        pip_tmp_dir = p.join(temp_dir, pip_tmp_dirs[0])
+        filename = url.split('/')[-1]
+        ext = p.splitext(filename)[1][1:]
+        if sha256(filename) != hash_:
+            raise AssertionError(f'SHA256 hash does not match for {filename}')
+        with tarfile.open(filename, f"r:{ext}") as tar:
+            tar.extractall()
 
         for _, to in move:
             to = p.normpath(p.join(src_dir, to))
             if p.isdir(to):
                 shutil.rmtree(to)
         for from_, to in move:
-            from_ = p.join(pip_tmp_dir, p.normpath(from_))
+            from_ = from_ = p.abspath(p.normpath(from_))
             to = p.normpath(p.join(src_dir, to))
             os.makedirs(to, exist_ok=True)
             for s in os.listdir(from_):
@@ -135,7 +148,7 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
                 shutil.move(p.join(from_, s), to_s if p.isfile(to_s) else to)
     except Exception as e:
         os.chdir(cwd)
-        shutil.rmtree(dirpath)
+        #shutil.rmtree(dirpath)
         raise e
     os.chdir(cwd)
     shutil.rmtree(dirpath)
