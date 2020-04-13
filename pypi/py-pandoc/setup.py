@@ -108,7 +108,7 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         print(REQ, file=open(req, 'w', encoding='utf-8'))
 
         proc = run([sys.executable, "-m", "pip", "download", "--require-hashes", "-b", temp_dir, "--no-clean", "-r", req],
-                   stdout=PIPE, stderr=PIPE, encoding='utf-8', env={**dict(os.environ), **dict(TMPDIR=temp_dir)})
+                   stdout=PIPE, stderr=PIPE, encoding='utf-8', env={**dict(os.environ), **dict(TMPDIR=temp_dir, TEMP=temp_dir)})
 
         if proc.stderr is None:
             raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + 'assert proc.stderr is not None')
