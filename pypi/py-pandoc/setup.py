@@ -51,7 +51,6 @@ spec = dict(
 # spec = spec.get(platform.system(), spec['Linux'])
 URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 # URL = 'file:///C:/Users/X/Downloads/pandoc-{version}-{build}.tar.bz2'.format(**spec)
-REQ = '{url} --hash=sha256:{hash_}\n'.format(url=URL, **spec)
 
 
 class PostInstallCommand(install):
@@ -104,10 +103,11 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
 
         temp_dir = p.join(os.getcwd(), '__temp__')
         os.makedirs(temp_dir, exist_ok=True)
-        req = p.join(os.getcwd(), 'requirements.txt')
-        print(REQ, file=open(req, 'w', encoding='utf-8'))
+        req_path = p.join(os.getcwd(), 'requirements.txt')
+        req_text = '{url} --hash=sha256:{hash_}\n'.format(url=url, hash_=hash_)
+        print(req_text, file=open(req_path, 'w', encoding='utf-8'))
 
-        proc = run([sys.executable, "-m", "pip", "download", "--require-hashes", "-b", temp_dir, "--no-clean", "-r", req],
+        proc = run([sys.executable, "-m", "pip", "download", "--require-hashes", "-b", temp_dir, "--no-clean", "-r", req_path],
                    stdout=PIPE, stderr=PIPE, encoding='utf-8', env={**dict(os.environ), **dict(TMPDIR=temp_dir, TEMP=temp_dir)})
 
         if proc.stderr is None:
