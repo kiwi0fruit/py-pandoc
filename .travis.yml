@@ -1,13 +1,13 @@
 # Only build PRs or tags
-if: (type = pull_request) OR (tag IS present)
+# if: (type = pull_request) OR (tag IS present)
 
 os:
   - windows
   - linux
   - osx
 
-dist: xenial
-
+dist: bionic
+osx_image: xcode11.3
 language: shell
 
 notifications:
