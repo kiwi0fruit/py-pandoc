@@ -34,7 +34,7 @@ def read_pythonic_config(file_path, vars_):
 # ------------------------------------------------------------------------------
 # version = read_pythonic_config(p.join(src_dir, 'py_pandoc', 'version.py'), ['version'])[0]
 assert_64_bit_os()
-version, build = '2.9.2.1', '.1'  # '2.7.3', '.1'
+version, build = '2.9.2.1', '.2'  # '2.7.3', '.1'
 conda_version = version
 tmp = 'tmp'
 spec = dict(
@@ -113,14 +113,14 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         if proc.stderr is None:
             raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + 'assert proc.stderr is not None')
         stderr = str(proc.stderr)
+        if 'sha256' in stderr.lower():
+            raise AssertionError(stderr)
         if not (('FileNotFoundError' in stderr) and ('setup.py' in stderr)):
-            raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + stderr)
+            raise AssertionError('pip download error:\n\n{}\n\nOr pip download behaviour changed. Downgrade pip or wait for bugfix in this case.'.format(stderr))
         pip_tmp_dirs = os.listdir(temp_dir)
         if len(pip_tmp_dirs) != 1:
             raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + 'assert len(pip_tmp_dirs) == 1')
 
-        if 'sha256' in stderr.lower():
-            raise AssertionError(stderr)
         pip_tmp_dir = p.join(temp_dir, pip_tmp_dirs[0])
 
         for _, to in move:
