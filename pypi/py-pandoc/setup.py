@@ -107,7 +107,7 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         req_text = '{url} --hash=sha256:{hash_}\n'.format(url=url, hash_=hash_)
         print(req_text, file=open(req_path, 'w', encoding='utf-8'))
 
-        proc = run([sys.executable, "-m", "pip", "download", "--require-hashes", "--no-clean", "-r", req_path],
+        proc = run([sys.executable, "-m", "pip", "download", "-b", temp_dir, "--require-hashes", "--no-clean", "-r", req_path],
                    stdout=PIPE, stderr=PIPE, encoding='utf-8', env={**dict(os.environ), **dict(TMPDIR=temp_dir, TEMP=temp_dir, TMP=temp_dir)})
 
         if proc.stderr is None:
@@ -120,6 +120,8 @@ def excract_tar_and_move_files(url, hash_, move, **kwargs):
         pip_tmp_dirs = os.listdir(temp_dir)
         if len(pip_tmp_dirs) != 1:
             raise AssertionError('pip download behaviour changed. Downgrade pip or wait for bugfix.\n' + 'assert len(pip_tmp_dirs) == 1; pip_tmp_dirs == {}'.format(pip_tmp_dirs))
+        else:
+            raise AssertionError("{}".format(pip_tmp_dirs))
 
         pip_tmp_dir = p.join(temp_dir, pip_tmp_dirs[0])
 
