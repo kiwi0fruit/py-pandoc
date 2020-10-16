@@ -49,7 +49,7 @@ spec = dict(
         hash_='48484d59f066025a7b08b2c01027acf5d54daf2309dc88f4554c420b7e059ec2'),
 )[platform.system()]
 # spec = spec.get(platform.system(), spec['Linux'])
-URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2aaa'.format(**spec)
+URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 # URL = 'file:///C:/Users/X/Downloads/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 
 
