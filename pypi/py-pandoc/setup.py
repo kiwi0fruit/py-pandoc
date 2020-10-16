@@ -40,16 +40,16 @@ tmp = 'tmp'
 spec = dict(
     Windows=dict(
         os='win', move=[('Library/bin', tmp)], version=conda_version, build=0,
-        hash_='111cb4d2e8807da933662f758341f5b6675fec8a5b3d417de4b5f57340c215eec93'),
+        hash_='cb4d2e8807da933662f758341f5b6675fec8a5b3d417de4b5f57340c215eec93'),
     Linux=dict(
         os='linux', move=[('bin', tmp)], version=conda_version, build=0,
-        hash_='111a63d9987414f3109265955855b5aba79bb8279321f119ff760342d1ee1d3e814'),
+        hash_='a63d9987414f3109265955855b5aba79bb8279321f119ff760342d1ee1d3e814'),
     Darwin=dict(
         os='osx', move=[('bin', tmp)], version=conda_version, build=0,
-        hash_='11148484d59f066025a7b08b2c01027acf5d54daf2309dc88f4554c420b7e059ec2'),
+        hash_='48484d59f066025a7b08b2c01027acf5d54daf2309dc88f4554c420b7e059ec2'),
 )[platform.system()]
 # spec = spec.get(platform.system(), spec['Linux'])
-URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2'.format(**spec)
+URL = 'https://anaconda.org/conda-forge/pandoc/{version}/download/{os}-64/pandoc-{version}-{build}.tar.bz2aaa'.format(**spec)
 # URL = 'file:///C:/Users/X/Downloads/pandoc-{version}-{build}.tar.bz2'.format(**spec)
 
 
