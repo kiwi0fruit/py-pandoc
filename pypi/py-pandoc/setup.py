@@ -34,7 +34,7 @@ def read_pythonic_config(file_path, vars_):
 # ------------------------------------------------------------------------------
 # version = read_pythonic_config(p.join(src_dir, 'py_pandoc', 'version.py'), ['version'])[0]
 assert_64_bit_os()
-version, build = '2.9.2.0', '.2'  # '2.7.3', '.1'
+version, build = '2.9.2', '.0.2'  # '2.7.3', '.1'
 conda_version = version
 tmp = 'tmp'
 spec = dict(
